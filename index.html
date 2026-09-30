@@ -168,6 +168,45 @@
   .cta .note{margin-top:18px;font-size:15px;color:#5C4A12}
   .cta-art svg{width:100%;max-width:360px;height:auto;margin-left:auto}
   #try{scroll-margin-top:84px}
+  /* checker */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 auto 28px;max-width:900px}
+  .stat{background:var(--indigo-deep);color:#fff;border-radius:18px;padding:18px 20px;text-align:center}
+  .stat-num{display:block;font-family:"Baloo 2",sans-serif;font-weight:800;font-size:40px;line-height:1.1;color:var(--sun)}
+  .stat-num.small{font-size:22px;line-height:1.3;padding:8px 0}
+  .stat-label{font-size:15px;color:#C9CEF2;font-weight:700}
+  .checker{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:start}
+  .form h3{font-size:20px;margin:22px 0 10px;color:var(--indigo-deep)}
+  .form h3 small{font-family:Nunito,sans-serif;font-weight:600;font-size:14px;color:var(--muted)}
+  .form-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .form-top h3{margin-top:0}
+  .link-btn{border:2px solid var(--indigo);background:var(--indigo-soft);color:var(--indigo);font:inherit;font-weight:800;font-size:15px;border-radius:999px;padding:8px 14px;cursor:pointer}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .form label{display:flex;flex-direction:column;gap:5px;font-size:15px;font-weight:700;color:var(--ink)}
+  .form label small{font-weight:600;color:var(--muted)}
+  .span2{grid-column:1/-1}
+  .form input,.form select,.form textarea{font:inherit;font-size:16px;font-weight:600;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);min-height:46px;width:100%}
+  .form input:focus,.form select:focus,.form textarea:focus{outline:3px solid var(--sun);border-color:var(--indigo)}
+  .helper-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;padding:10px;border-radius:14px;background:var(--bg)}
+  .helper-row label{font-size:13px}
+  .form-error{color:#A62E1C;font-weight:800;margin:14px 0 0;min-height:1px}
+  .submit{margin-top:16px;width:100%;justify-content:center;border:0;cursor:pointer}
+  .submit[disabled]{opacity:.6;cursor:wait}
+  .fine{font-size:13px;color:var(--muted);margin-top:12px}
+  .placeholder{text-align:center;color:var(--muted);padding:40px 10px}
+  .placeholder svg{margin:0 auto 14px}
+  .summary{background:var(--indigo-soft);border-radius:14px;padding:14px 16px;font-size:16px;margin-bottom:6px}
+  .none-found{background:var(--leaf-soft);border-radius:14px;padding:13px 16px;font-size:16px;font-weight:700;color:#0F6B46}
+  .gapitem small{display:block;color:var(--muted);font-size:14px}
+  .decision{margin-bottom:12px}
+  .decision b{display:block;font-size:16px;margin-bottom:6px}
+  .handover-wrap{margin-bottom:10px}
+  .handover-actions{display:flex;gap:8px;margin-top:6px}
+  .mini{font:inherit;font-size:13px;font-weight:800;border-radius:999px;padding:5px 12px;border:2px solid var(--line);background:#fff;color:var(--indigo);cursor:pointer;text-decoration:none}
+  .notes-resp{background:var(--sun-soft);border-radius:14px;padding:12px 14px;font-size:15px}
+  .remaining{font-size:13px;color:var(--muted);margin-top:14px}
+  @media (max-width:920px){.checker{grid-template-columns:1fr}.stats{grid-template-columns:1fr}}
+  @media (max-width:560px){.grid2{grid-template-columns:1fr}.helper-row{grid-template-columns:1fr 1fr}}
+
 
   .skip{position:absolute;left:-999px;top:8px;background:var(--indigo-deep);color:#fff;padding:10px 16px;border-radius:10px;z-index:20;font-weight:800}
   .skip:focus{left:12px}
@@ -232,7 +271,7 @@
         <button type="button" data-size="normal" aria-pressed="true" aria-label="Normal text size">A</button>
         <button type="button" data-size="large" class="big" aria-pressed="false" aria-label="Larger text size">A+</button>
       </div>
-      <a href="#try" class="btn btn-primary">See an example</a>
+      <a href="#try" class="btn btn-primary">Try it</a>
     </div>
   </div>
 </nav>
@@ -245,7 +284,7 @@
       <h1>Spot the gaps in your parent's hospital visit <span class="hl">before the day<svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 10 C 80 2, 200 2, 297 8" stroke="#FFB81C" stroke-width="6" fill="none" stroke-linecap="round"/></svg></span>.</h1>
       <p class="lead">Check who's helping, what happens if the visit runs late, and who brings them home.</p>
       <div class="cta-row">
-        <a href="#try" class="btn btn-primary">See an example gap check →</a>
+        <a href="#try" class="btn btn-primary">Try the gap check →</a>
         <a href="#how" class="btn btn-ghost">See how it works</a>
       </div>
       <p class="audience">Built for adult children coordinating a parent's visits from another city.</p>
@@ -460,23 +499,74 @@
 </section>
 
 <section id="try">
-  <div class="wrap preview-grid">
-    <div>
+  <div class="wrap">
+    <div class="section-head">
       <span class="eyebrow">Visit Gap Check</span>
-      <h2>What you get back</h2>
-      <p class="lead" style="margin-bottom:20px">Clear gaps, real choices and a message for each helper. If something can't be covered with the people you entered, VisitSaathi says so instead of pretending the plan is complete.</p>
-      <div class="soon"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="#2E3A87" stroke-width="2.5"/><path d="M10 5v5l3 2" stroke="#2E3A87" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>The interactive gap check is coming to this page next. This preview uses the example visit.</div>
+      <h2>Check your parent's next visit</h2>
+      <p class="lead">Enter the plan using roles, not names. VisitSaathi finds the gaps, shows your choices and drafts a message for each helper. If something can't be covered with the people you entered, it says so.</p>
     </div>
-    <div class="card out">
-      <h4>Gaps</h4>
-      <div class="gapitem"><i class="dot"></i><div><b>1:00 to 2:00 uncovered</b> if the scan runs late. Brother leaves at 1.</div></div>
-      <div class="gapitem warn"><i class="dot"></i><div><b>Reports collection</b> has no owner.</div></div>
-      <h4>Decide one</h4>
-      <div class="opt"><i class="radio"></i><div>Neighbour covers 1:00 to 2:00<small>Listed as available after 12. Tentative.</small></div></div>
-      <div class="opt"><i class="radio"></i><div>Move the cab to 2:15<small>Leaves 1:00 to 2:00 still uncovered.</small></div></div>
-      <div class="opt"><i class="radio"></i><div>Brother stays until 2<small>Only if he confirms. Marked as flexible.</small></div></div>
-      <h4>Handover</h4>
-      <div class="handover"><b>Draft handover for Brother · pending confirmation</b>Thursday, reach home by 9:15. The file is in the blue bag. You are with her until 1 p.m.<br><span class="unres">UNRESOLVED: 1:00 to 2:00 cover (neighbour not confirmed)</span> <span class="unres">UNRESOLVED: reports collection</span></div>
+
+    <div class="stats" aria-live="polite">
+      <div class="stat"><span class="stat-num" id="statChecks">–</span><span class="stat-label">visit plans checked</span></div>
+      <div class="stat"><span class="stat-num" id="statAvg">–</span><span class="stat-label">average gaps found per plan</span></div>
+      <div class="stat"><span class="stat-num small" id="statTop">–</span><span class="stat-label" id="statTopLabel">most often left uncovered</span></div>
+    </div>
+
+    <div class="checker">
+      <form id="gapForm" class="card form" novalidate>
+        <div class="form-top">
+          <h3>The visit</h3>
+          <button type="button" class="link-btn" id="loadExample">Load the example visit</button>
+        </div>
+        <div class="grid2">
+          <label>Visit type
+            <select name="visitType" id="visitType">
+              <option value="consult">Consultation</option>
+              <option value="consult_tests">Consultation with tests</option>
+              <option value="scan_prep">Scan with preparation</option>
+              <option value="day_procedure">Day procedure</option>
+            </select>
+          </label>
+          <label>Appointment time<input type="time" name="apptTime" required></label>
+          <label>Could finish as early as<input type="time" name="finishEarliest" required></label>
+          <label>Could finish as late as<input type="time" name="finishLatest" required></label>
+        </div>
+
+        <h3>Helpers <small>(up to 3, by role)</small></h3>
+        <div class="helpers" id="helpers"></div>
+
+        <h3>Transport</h3>
+        <div class="grid2">
+          <label>To the hospital<select name="thereOwner" data-owner="transport"></select></label>
+          <label>Pickup time<input type="time" name="thereTime"></label>
+          <label>Back home<select name="backOwner" data-owner="transport"></select></label>
+          <label>Return time<input type="time" name="backTime"></label>
+        </div>
+
+        <h3>Who handles each step</h3>
+        <div class="grid2">
+          <label>Carries the file and reports<select name="own_documents" data-owner="task"></select></label>
+          <label>Registration at the hospital<select name="own_registration" data-owner="task"></select></label>
+          <label>Pharmacy and billing<select name="own_pharmacy" data-owner="task"></select></label>
+          <label>Collects reports later<select name="own_reports" data-owner="task"></select></label>
+          <label class="span2">Stays until they are inside at home<select name="own_homeArrival" data-owner="task"></select></label>
+        </div>
+
+        <label class="span2">Anything else about the logistics? <small>(optional, no names or medical details)</small>
+          <textarea name="notes" maxlength="300" rows="2" placeholder="e.g. Papa needs a wheelchair at the entrance"></textarea>
+        </label>
+
+        <p class="form-error" id="formError" role="alert"></p>
+        <button type="submit" class="btn btn-primary submit" id="submitBtn">Check my plan →</button>
+        <p class="fine">Free: 3 checks per day. We store the plan (roles and times only) to count how many gaps families find. Notes are never stored. Logistics only, not medical advice.</p>
+      </form>
+
+      <div class="card out" id="result" aria-live="polite">
+        <div class="placeholder" id="placeholder">
+          <svg width="64" height="64" viewBox="0 0 40 40" aria-hidden="true"><circle cx="17" cy="17" r="12" fill="none" stroke="#FF6B57" stroke-width="4"/><line x1="26" y1="26" x2="36" y2="36" stroke="#FF6B57" stroke-width="5" stroke-linecap="round"/></svg>
+          <p><b>Your results appear here.</b><br>Fill in the plan, or load the example visit, then press "Check my plan".</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -527,7 +617,7 @@
     <div>
       <h2>If you've managed a parent's hospital visit from another city, which part of the day tends to fall through?</h2>
       <p class="lead">We're looking for families with a planned visit coming up to help shape VisitSaathi. Tell us about yours.</p>
-      <a href="#try" class="btn btn-primary">See an example gap check →</a>
+      <a href="#try" class="btn btn-primary">Try the gap check →</a>
       <p class="note">VisitSaathi is a product in development, built as part of a GenAI course project.</p>
     </div>
     <div class="cta-art">
@@ -577,6 +667,112 @@
     }
     btns.forEach(function(b){b.addEventListener('click',function(){set(b.dataset.size);});});
     try{var saved=localStorage.getItem('vs-size');if(saved)set(saved);}catch(e){}
+  })();
+</script>
+<script>
+  (function(){
+    var ROLES=['Sibling','Spouse','Other relative','Neighbour','Friend','Caregiver','Driver'];
+    var form=document.getElementById('gapForm'), helpersEl=document.getElementById('helpers');
+    var resultEl=document.getElementById('result'), errEl=document.getElementById('formError'), btn=document.getElementById('submitBtn');
+
+    // Anonymous visitor id for the daily cap. Falls back to a per-page id if storage is blocked.
+    var visitorId;
+    try{visitorId=localStorage.getItem('vs-visitor');}catch(e){}
+    if(!visitorId){visitorId=(crypto.randomUUID?crypto.randomUUID():String(Math.random()).slice(2)+Date.now());try{localStorage.setItem('vs-visitor',visitorId);}catch(e){}}
+
+    function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+    for(var i=1;i<=3;i++){
+      var row=document.createElement('div');row.className='helper-row';
+      row.innerHTML='<label>Helper '+i+'<select name="role'+i+'"><option value="">'+(i===1?'Choose role':'None')+'</option>'+ROLES.map(function(r){return '<option>'+r+'</option>';}).join('')+'</select></label>'+
+        '<label>Commitment<select name="commit'+i+'"><option value="firm">Firm</option><option value="tentative">Tentative</option></select></label>'+
+        '<label>Free from<input type="time" name="from'+i+'"></label><label>Until<input type="time" name="until'+i+'"></label>';
+      helpersEl.appendChild(row);
+    }
+
+    function helperList(){
+      var out=[];
+      for(var i=1;i<=3;i++){var r=form['role'+i].value;if(r)out.push({id:'h'+i,role:r});}
+      return out;
+    }
+    function refreshOwners(){
+      var hs=helperList();
+      form.querySelectorAll('select[data-owner]').forEach(function(sel){
+        var keep=sel.value, isT=sel.dataset.owner==='transport';
+        var opts='<option value="none">Not assigned</option>'+hs.map(function(h){return '<option value="'+h.id+'">'+esc(h.role)+' ('+h.id.slice(1)+')</option>';}).join('')+(isT?'<option value="cab">Cab or taxi</option>':'');
+        sel.innerHTML=opts;
+        if([].some.call(sel.options,function(o){return o.value===keep;}))sel.value=keep;
+      });
+    }
+    helpersEl.addEventListener('change',function(e){if(e.target.name&&e.target.name.indexOf('role')===0)refreshOwners();});
+    refreshOwners();
+
+    var DEFAULTS={consult:[30,120],consult_tests:[90,210],scan_prep:[90,240],day_procedure:[240,420]};
+    function addMin(t,m){var p=t.split(':').map(Number),x=(p[0]*60+p[1]+m)%1440;return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');}
+    function suggestFinish(){var t=form.apptTime.value;if(!t)return;var d=DEFAULTS[form.visitType.value];form.finishEarliest.value=addMin(t,d[0]);form.finishLatest.value=addMin(t,d[1]);}
+    form.apptTime.addEventListener('change',suggestFinish);form.visitType.addEventListener('change',suggestFinish);
+
+    document.getElementById('loadExample').addEventListener('click',function(){
+      var v={visitType:'scan_prep',apptTime:'10:00',finishEarliest:'11:30',finishLatest:'14:00',
+        role1:'Sibling',from1:'09:00',until1:'13:00',commit1:'firm',
+        role2:'Neighbour',from2:'12:00',until2:'18:00',commit2:'tentative',
+        role3:'Driver',from3:'08:30',until3:'10:30',commit3:'firm'};
+      Object.keys(v).forEach(function(k){form[k].value=v[k];});
+      refreshOwners();
+      var o={thereOwner:'h3',thereTime:'09:15',backOwner:'cab',backTime:'13:30',own_documents:'h1',own_registration:'h1',own_pharmacy:'h1',own_reports:'none',own_homeArrival:'none',notes:''};
+      Object.keys(o).forEach(function(k){form[k].value=o[k];});
+      errEl.textContent='';
+    });
+
+    function gather(){
+      var helpers=[];
+      for(var i=1;i<=3;i++){var r=form['role'+i].value;if(r)helpers.push({role:r,from:form['from'+i].value,until:form['until'+i].value,commitment:form['commit'+i].value});}
+      var idMap={},n=0;for(var j=1;j<=3;j++){if(form['role'+j].value){n++;idMap['h'+j]='h'+n;}}
+      function m(v){return idMap[v]||v;}
+      return {visitorId:visitorId,visitType:form.visitType.value,apptTime:form.apptTime.value,finishEarliest:form.finishEarliest.value,finishLatest:form.finishLatest.value,
+        helpers:helpers,transportThere:{owner:m(form.thereOwner.value),time:form.thereTime.value},transportBack:{owner:m(form.backOwner.value),time:form.backTime.value},
+        owners:{documents:m(form.own_documents.value),registration:m(form.own_registration.value),pharmacy:m(form.own_pharmacy.value),reports:m(form.own_reports.value),homeArrival:m(form.own_homeArrival.value)},
+        notes:form.notes.value};
+    }
+
+    function render(d){
+      var h='<h4>Summary</h4><div class="summary">'+esc(d.summary)+'</div>';
+      h+='<h4>Gaps found ('+d.gaps.length+')</h4>';
+      h+=d.gaps.length?d.gaps.map(function(g){return '<div class="gapitem'+(g.severity==='medium'?' warn':'')+'"><i class="dot"></i><div><b>'+esc(g.title)+'</b><small>'+esc(g.stage)+' · '+esc(g.detail)+'</small></div></div>';}).join(''):'<div class="none-found">No gaps found. Every stage has someone assigned.</div>';
+      if(d.decisions&&d.decisions.length){h+='<h4>Decisions for you</h4>'+d.decisions.map(function(x){return '<div class="decision"><b>'+esc(x.question)+'</b>'+x.options.map(function(o){return '<div class="opt"><i class="radio"></i><div>'+esc(o)+'</div></div>';}).join('')+'</div>';}).join('');}
+      if(d.handovers&&d.handovers.length){h+='<h4>Draft handovers</h4>'+d.handovers.map(function(x,i){return '<div class="handover-wrap"><div class="handover" id="ho'+i+'"><b>For: '+esc(x.role)+'</b>'+esc(x.message)+'</div><div class="handover-actions"><button type="button" class="mini" data-copy="'+i+'">Copy</button><a class="mini" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(x.message)+'">Share on WhatsApp</a></div></div>';}).join('');}
+      if(d.notes_response){h+='<h4>About your note</h4><div class="notes-resp">'+esc(d.notes_response)+'</div>';}
+      if(typeof d.remaining==='number')h+='<p class="remaining">'+d.remaining+' free check'+(d.remaining===1?'':'s')+' left today.</p>';
+      resultEl.innerHTML=h;
+      resultEl.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){var t=d.handovers[+b.dataset.copy].message;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Copied';},function(){b.textContent='Select and copy';});});});
+    }
+
+    form.addEventListener('submit',function(e){
+      e.preventDefault();errEl.textContent='';
+      if(!form.role1.value&&!form.role2.value&&!form.role3.value){errEl.textContent='Add at least one helper.';return;}
+      btn.disabled=true;btn.textContent='Checking…';
+      resultEl.innerHTML='<div class="placeholder"><p><b>Checking the plan…</b></p></div>';
+      fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(gather())})
+        .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+        .then(function(x){
+          if(!x.ok){errEl.textContent=x.j.error||'Something went wrong.';resultEl.innerHTML='<div class="placeholder"><p>'+esc(x.j.error||'Something went wrong.')+'</p></div>';return;}
+          render(x.j);loadStats();
+          if(window.innerWidth<920)resultEl.scrollIntoView({behavior:'smooth',block:'start'});
+        })
+        .catch(function(){errEl.textContent='Could not reach the server. Please try again.';})
+        .finally(function(){btn.disabled=false;btn.textContent='Check my plan →';});
+    });
+
+    function loadStats(){
+      fetch('/api/stats').then(function(r){return r.ok?r.json():null;}).then(function(s){
+        if(!s)return;
+        document.getElementById('statChecks').textContent=s.checks;
+        document.getElementById('statAvg').textContent=s.checks?s.avgGaps:'–';
+        document.getElementById('statTop').textContent=s.topGap?s.topGap.label:'–';
+        document.getElementById('statTopLabel').textContent=s.topGap?('most often left uncovered ('+s.topGap.share+'% of plans)'):'most often left uncovered';
+      }).catch(function(){});
+    }
+    loadStats();
   })();
 </script>
 </body>
