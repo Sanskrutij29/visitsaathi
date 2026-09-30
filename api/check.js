@@ -5,8 +5,8 @@ const crypto = require('crypto');
 const { validate, analyse, ValidationError, VISIT_TYPES, OWNER_TASKS, fmt, toMin } = require('./_rules');
 const { insertCheck, countRecent } = require('./_supabase');
 
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
-const MAX_OUTPUT_TOKENS = 600;
+const MODEL = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
+const MAX_OUTPUT_TOKENS = 800;
 const DAILY_CAP = 3;
 const MEDICAL_REFUSAL = "VisitSaathi only helps with visit logistics, so I can't advise on symptoms, medicines or doses. Please ask the treating doctor, or call emergency services if it is urgent.";
 const MEDICAL_RE = /\b(dose|dosage|dosing|mg|tablet|tablets|pill|pills|medicine|medicines|medication|insulin|symptom|symptoms|pain|fever|bleeding|dizzy|dizziness|chest|breathless|breathing|diagnos\w*|prescri\w*|side effect\w*|blood pressure|sugar level)\b/i;
