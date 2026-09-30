@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VisitSaathi | Plan your parent's hospital visit, including the ride home</title>
+<meta name="description" content="VisitSaathi helps adult children living away from their parents find the gaps in a hospital visit plan before the day, including who is there if the visit runs late.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF9EF; --surface:#FFFFFF; --ink:#1E2447; --muted:#50577A; --line:#EEE3D0;
+    --indigo:#2E3A87; --indigo-deep:#1E2660; --indigo-soft:#E6E9FA;
+    --coral:#FF6B57; --coral-strong:#D63F2A; --coral-text:#C9381F; --coral-soft:#FFE4DF;
+    --sun:#FFB81C; --sun-soft:#FFF1CC;
+    --leaf:#1FA971; --leaf-soft:#DDF5EA;
+    --sky:#3FA2F6; --sky-soft:#E0F0FE;
+    --lotus:#EE6FA5; --lotus-soft:#FDE3EF;
+    --skin:#C68A62; --skin2:#A86E4A;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:Nunito,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;font-size:18px}
+  h1,h2,h3{font-family:"Baloo 2",Nunito,sans-serif;font-weight:800;line-height:1.15}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  section{padding:88px 0}
+  .eyebrow{display:inline-block;font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--coral-text);margin-bottom:10px}
+  .lead{font-size:20px;color:var(--muted);max-width:640px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:16px 28px;border-radius:999px;font-weight:800;text-decoration:none;font-size:18px;transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-primary{background:var(--coral-strong);color:#fff;box-shadow:0 6px 0 #A82C1B}
+  .btn-primary:hover{box-shadow:0 8px 0 #A82C1B}
+  .btn-ghost{background:#fff;border:2.5px solid var(--indigo);color:var(--indigo)}
+  svg{display:block}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:10;background:rgba(255,249,239,.94);backdrop-filter:blur(8px);border-bottom:2px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .logo{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:26px;text-decoration:none;display:flex;align-items:center;gap:10px;color:var(--indigo)}
+  .logo b{color:var(--coral-strong)}
+  .nav-links{display:flex;gap:28px;align-items:center;font-size:16px;font-weight:700}
+  .nav-links a{text-decoration:none;color:var(--muted)}
+  .nav-links a.btn{white-space:nowrap;color:#fff;padding:10px 20px;font-size:16px;box-shadow:0 4px 0 #A82C1B}
+
+  /* hero */
+  .hero{padding:56px 0 72px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;right:-160px;top:-120px;width:620px;height:620px;border-radius:50%;background:var(--sun-soft);z-index:-1}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+  .hero h1{font-size:clamp(34px,4.3vw,52px);margin-bottom:18px;color:var(--indigo-deep)}
+  .hero h1 .hl{color:var(--coral-strong);position:relative;white-space:nowrap}
+  .hero h1 .hl svg{position:absolute;left:0;bottom:-6px;width:100%;height:14px}
+  .hero .lead{margin-bottom:30px}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap}
+  .badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;padding:7px 14px;border-radius:999px;background:var(--leaf-soft);color:#0F6B46;font-size:14px;font-weight:800}
+  .badge i{width:9px;height:9px;border-radius:50%;background:var(--leaf)}
+  .hero-grid>*{min-width:0}
+  .hero-art{position:relative}
+  .hero-art svg{width:100%;height:auto}
+
+  /* timeline */
+  .tl-section{padding:0 0 88px}
+  .card{background:var(--surface);border:2px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:0 14px 34px rgba(30,36,71,.08)}
+  .tl-wrap{display:grid;grid-template-columns:.8fr 1.2fr;gap:36px;align-items:center}
+  .tl-wrap h2{font-size:clamp(28px,3.4vw,40px);color:var(--indigo-deep);margin-bottom:12px}
+  .tl-title{font-weight:800;font-size:17px}
+  .tl-sub{font-size:14px;color:var(--muted);margin-bottom:20px}
+  .tl-hours{display:grid;grid-template-columns:repeat(6,1fr);font-size:13px;font-weight:700;color:var(--muted);margin-left:100px;margin-bottom:6px}
+  .tl-row{display:flex;align-items:center;margin-bottom:12px;font-size:15px;font-weight:700}
+  .tl-label{width:100px;flex-shrink:0;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .tl-label i{width:12px;height:12px;border-radius:4px}
+  .tl-track{position:relative;flex:1;height:32px;background:repeating-linear-gradient(90deg,#F2EADB 0 2px,transparent 2px calc(100%/6));border-radius:8px}
+  .bar{position:absolute;top:3px;height:26px;border-radius:8px;font-size:13px;font-weight:800;color:#fff;display:flex;align-items:center;padding:0 10px;white-space:nowrap;overflow:hidden}
+  .bar.visit{background:var(--indigo)}
+  .bar.late{background:repeating-linear-gradient(45deg,var(--indigo-soft) 0 7px,#CBD1F3 7px 14px);color:var(--indigo)}
+  .bar.helper{background:#127A50}
+  .bar.cab{background:#1A73C2}
+  .bar.gap{background:var(--coral-soft);border:2.5px dashed var(--coral);color:#A62E1C}
+  .tl-flag{margin-top:18px;padding:16px 18px;border-radius:14px;background:var(--coral-strong);color:#fff;font-size:16px;display:flex;gap:12px;align-items:flex-start}
+  .tl-flag svg{flex-shrink:0;margin-top:2px}
+
+  /* story */
+  .story{background:var(--indigo-deep);color:#E4E7FA;border-radius:40px;margin:0 16px}
+  .story-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:center}
+  .story .eyebrow{color:var(--sun)}
+  .story h2{font-size:clamp(30px,3.6vw,42px);color:#fff;margin-bottom:24px}
+  .post{font-size:19px}
+  .post p{margin-bottom:16px}
+  .post .q{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:28px;line-height:1.25;color:var(--sun);margin:22px 0}
+  .post .quiet{color:#A9B0DE}
+  .clock-art svg{width:100%;max-width:340px;height:auto}
+
+  /* steps */
+  .section-head{margin-bottom:44px;text-align:center}
+  .section-head .lead{margin:0 auto}
+  .section-head h2{font-size:clamp(30px,3.6vw,42px);margin-bottom:12px;color:var(--indigo-deep)}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .step{padding:28px 24px;border-radius:var(--radius);background:var(--surface);border:2px solid var(--line);position:relative}
+  .step .num{position:absolute;top:18px;right:20px;font-family:"Baloo 2";font-weight:800;font-size:40px;line-height:1;opacity:.18}
+  .step .ico{width:68px;height:68px;border-radius:20px;display:grid;place-items:center;margin-bottom:16px}
+  .step h3{font-size:22px;margin-bottom:8px}
+  .step p{font-size:16px;color:var(--muted)}
+  .c1 .ico{background:var(--sky-soft)} .c1 .num{color:var(--sky)}
+  .c2 .ico{background:var(--leaf-soft)} .c2 .num{color:var(--leaf)}
+  .c3 .ico{background:var(--coral-soft)} .c3 .num{color:var(--coral)}
+  .c4 .ico{background:var(--sun-soft)} .c4 .num{color:#D99200}
+
+  /* journey */
+  .journey{background:linear-gradient(180deg,var(--bg),var(--sky-soft))}
+  .road{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:20px}
+  .road::before{content:"";position:absolute;left:8%;right:8%;top:54px;height:6px;border-radius:6px;background:repeating-linear-gradient(90deg,var(--indigo) 0 18px,transparent 18px 30px);opacity:.35}
+  .stage{text-align:center;position:relative}
+  .stage .disc{width:110px;height:110px;border-radius:50%;margin:0 auto 16px;display:grid;place-items:center;border:5px solid #fff;box-shadow:0 8px 20px rgba(30,36,71,.12)}
+  .stage h3{font-size:21px;margin-bottom:10px;color:var(--indigo-deep)}
+  .stage ul{list-style:none;font-size:15px;color:var(--muted);background:#fff;border-radius:16px;padding:12px 14px;text-align:left;border:2px solid var(--line)}
+  .stage li{padding:5px 0 5px 20px;position:relative}
+  .stage li::before{content:"";position:absolute;left:2px;top:13px;width:8px;height:8px;border-radius:50%;background:var(--line)}
+  .stage.hl ul{border-color:var(--coral);box-shadow:0 0 0 4px var(--coral-soft)}
+  .stage.hl li::before{background:var(--coral)}
+  .flag-tag{position:absolute;top:-6px;left:50%;transform:translateX(-50%);background:var(--coral-strong);color:#fff;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;white-space:nowrap;z-index:2}
+
+  /* output preview */
+  .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+  .preview-grid h2{font-size:clamp(30px,3.6vw,42px);margin-bottom:14px;color:var(--indigo-deep)}
+  .out h4{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:20px 0 10px}
+  .out h4:first-child{margin-top:0}
+  .gapitem{display:flex;gap:12px;padding:13px 16px;border-radius:14px;background:var(--coral-soft);font-size:16px;margin-bottom:8px}
+  .gapitem.warn{background:var(--sun-soft)}
+  .dot{width:12px;height:12px;border-radius:50%;background:var(--coral);margin-top:7px;flex-shrink:0}
+  .warn .dot{background:var(--sun)}
+  .opt{padding:11px 16px;border:2px solid var(--line);border-radius:14px;font-size:16px;font-weight:700;margin-bottom:8px;display:flex;gap:12px;align-items:center}
+  .opt .radio{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--indigo);flex-shrink:0}
+  .opt small{display:block;color:var(--muted);font-size:14px;font-weight:600}
+  .handover{background:#DCF8C6;border-radius:16px 16px 16px 4px;padding:14px 16px;font-size:15px;max-width:360px;box-shadow:0 2px 0 rgba(0,0,0,.06)}
+  .handover b{display:block;font-size:13px;color:#0F6B46;margin-bottom:4px}
+  .unres{margin-top:10px;display:inline-block;font-size:12px;font-weight:800;color:#fff;background:var(--coral-strong);border-radius:6px;padding:3px 9px}
+  .soon{display:inline-flex;gap:10px;align-items:center;margin-top:8px;padding:12px 16px;border-radius:14px;background:var(--indigo-soft);color:var(--indigo);font-size:16px;font-weight:700}
+
+  /* compare */
+  .compare-sec{background:var(--surface);border-top:2px solid var(--line);border-bottom:2px solid var(--line)}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .col{padding:30px;border-radius:var(--radius)}
+  .col.them{background:#F4F1EA}
+  .col.us{background:var(--leaf-soft);border:3px solid var(--leaf)}
+  .col-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .col h3{font-size:24px}
+  .col ul{list-style:none}
+  .col li{padding:11px 0 11px 36px;position:relative;font-size:17px;font-weight:600}
+  .col li::before{position:absolute;left:0;top:10px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:800}
+  .col.them li::before{content:"✕";background:#E4DED2;color:#8A8474}
+  .col.us li::before{content:"✓";background:var(--leaf);color:#fff}
+
+  /* promises */
+  .promises{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .promise{padding:28px;border-radius:var(--radius);background:var(--surface);border:2px solid var(--line)}
+  .promise .ico{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;margin-bottom:14px}
+  .promise h3{font-size:22px;margin-bottom:6px}
+  .promise p{font-size:16px;color:var(--muted)}
+
+  /* cta */
+  .cta{background:var(--sun);border-radius:40px;margin:0 16px 40px;padding:64px 0}
+  .cta-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+  .cta h2{font-size:clamp(28px,3.6vw,42px);color:var(--indigo-deep);margin-bottom:14px}
+  .cta .lead{color:#4A3A0C;margin-bottom:26px}
+  .cta .note{margin-top:18px;font-size:15px;color:#5C4A12}
+  .cta-art svg{width:100%;max-width:360px;height:auto;margin-left:auto}
+  #try{scroll-margin-top:84px}
+
+  .skip{position:absolute;left:-999px;top:8px;background:var(--indigo-deep);color:#fff;padding:10px 16px;border-radius:10px;z-index:20;font-weight:800}
+  .skip:focus{left:12px}
+  a:focus-visible,button:focus-visible{outline:4px solid var(--sun);outline-offset:3px;border-radius:12px}
+  .size-toggle{display:flex;border:2px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+  .size-toggle button{border:0;background:none;font:inherit;font-weight:800;color:var(--indigo);padding:6px 12px;cursor:pointer;min-width:44px;min-height:40px}
+  .size-toggle button[aria-pressed="true"]{background:var(--indigo);color:#fff}
+  .size-toggle .big{font-size:1.2em}
+  body.large main,body.large footer{zoom:1.18}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}.btn:hover{transform:none}}
+  footer{padding:28px 0 36px;font-size:15px;color:var(--muted)}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media (max-width:920px){
+    .hero-grid,.story-grid,.preview-grid,.compare,.tl-wrap,.cta-grid{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr 1fr}
+    .road{grid-template-columns:1fr 1fr;row-gap:32px}
+    .road::before{display:none}
+    .promises{grid-template-columns:1fr}
+    .nav-links a:not(.btn){display:none}
+    section{padding:64px 0}
+    .clock-art svg{max-width:240px;margin:0 auto}
+    .cta-art svg{margin:0 auto;max-width:280px}
+    .hero-art{max-width:520px;margin:0 auto}
+  }
+  @media (max-width:560px){
+    body{font-size:17px}
+    .steps{grid-template-columns:1fr}
+    .road{grid-template-columns:1fr}
+    .tl-label{width:78px;font-size:13px}
+    .tl-label i{display:none}
+    .tl-hours{margin-left:78px;font-size:11px}
+    .bar{font-size:11px;padding:0 6px}
+    .card{padding:18px}
+    .story,.cta{margin:0 8px;border-radius:28px}
+    .cta{margin-bottom:24px}
+    .hero h1 .hl{white-space:normal}
+    .hero h1 .hl svg{display:none}
+    .btn{font-size:17px;padding:14px 22px}
+    .nav-links a.btn{display:none}
+    .logo{font-size:22px}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<nav aria-label="Main">
+  <div class="wrap">
+    <a href="#" class="logo" aria-label="VisitSaathi home">
+      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
+        <circle cx="13" cy="18" r="11" fill="#FF6B57"/><circle cx="23" cy="18" r="11" fill="#2E3A87" opacity=".9"/>
+        <path d="M13 18c2-4 8-4 10 0" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span>Visit<b>Saathi</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#journey">What it checks</a>
+      <a href="#why">Why not WhatsApp</a>
+      <div class="size-toggle" role="group" aria-label="Text size">
+        <button type="button" data-size="normal" aria-pressed="true" aria-label="Normal text size">A</button>
+        <button type="button" data-size="large" class="big" aria-pressed="false" aria-label="Larger text size">A+</button>
+      </div>
+      <a href="#try" class="btn btn-primary">Try the gap check</a>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="badge"><i></i>In development · Early access</span>
+      <h1>Know who's covering every part of your parent's hospital visit, <span class="hl">including the ride home<svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 10 C 80 2, 200 2, 297 8" stroke="#FFB81C" stroke-width="6" fill="none" stroke-linecap="round"/></svg></span>, before the day.</h1>
+      <p class="lead">For adult children who organise a parent's hospital visits from another city. VisitSaathi checks the whole day against a realistic finishing time, shows the gaps nobody has covered, and helps you decide while there is still time to act.</p>
+      <div class="cta-row">
+        <a href="#try" class="btn btn-primary">Check a visit →</a>
+        <a href="#how" class="btn btn-ghost">See how it works</a>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <svg viewBox="0 0 520 460" role="img" aria-labelledby="heroArtTitle">
+        <title id="heroArtTitle">Illustration: a son walks his elderly mother to a hospital while a phone alert shows a gap found on Thursday from 1:00 to 2:00</title>
+        <!-- ground -->
+        <ellipse cx="270" cy="420" rx="230" ry="22" fill="#F4E4C5"/>
+        <!-- hospital -->
+        <rect x="300" y="110" width="190" height="300" rx="14" fill="#FFFFFF" stroke="#E3D6BF" stroke-width="3"/>
+        <rect x="300" y="110" width="190" height="46" rx="14" fill="#3FA2F6"/>
+        <rect x="300" y="140" width="190" height="16" fill="#3FA2F6"/>
+        <rect x="380" y="70" width="30" height="52" rx="6" fill="#FF6B57"/>
+        <rect x="369" y="81" width="52" height="30" rx="6" fill="#FF6B57"/>
+        <g fill="#E0F0FE" stroke="#BFDDF9" stroke-width="2">
+          <rect x="322" y="176" width="36" height="34" rx="6"/><rect x="377" y="176" width="36" height="34" rx="6"/><rect x="432" y="176" width="36" height="34" rx="6"/>
+          <rect x="322" y="230" width="36" height="34" rx="6"/><rect x="377" y="230" width="36" height="34" rx="6"/><rect x="432" y="230" width="36" height="34" rx="6"/>
+          <rect x="322" y="284" width="36" height="34" rx="6"/><rect x="432" y="284" width="36" height="34" rx="6"/>
+        </g>
+        <rect x="372" y="330" width="46" height="80" rx="6" fill="#2E3A87"/>
+        <line x1="395" y1="334" x2="395" y2="410" stroke="#1E2660" stroke-width="3"/>
+        <!-- tree -->
+        <rect x="486" y="330" width="10" height="80" rx="4" fill="#A86E4A"/>
+        <circle cx="491" cy="318" r="30" fill="#1FA971"/><circle cx="474" cy="336" r="18" fill="#28C080"/>
+
+        <!-- MOTHER -->
+        <!-- stick -->
+        <line x1="128" y1="300" x2="112" y2="414" stroke="#8A5A3B" stroke-width="6" stroke-linecap="round"/>
+        <!-- legs/feet -->
+        <ellipse cx="160" cy="414" rx="16" ry="7" fill="#6B4A36"/><ellipse cx="192" cy="414" rx="16" ry="7" fill="#6B4A36"/>
+        <!-- saree body -->
+        <path d="M150 236 Q176 222 204 236 L222 408 Q176 418 132 408 Z" fill="#EE6FA5"/>
+        <path d="M132 408 Q176 418 222 408 L220 390 Q176 400 134 390 Z" fill="#FFB81C"/>
+        <!-- pallu drape -->
+        <path d="M200 234 Q214 240 214 262 L150 360 L140 344 Z" fill="#D94F8C"/>
+        <path d="M203 236 L146 350" stroke="#FFB81C" stroke-width="5"/>
+        <!-- arm to stick -->
+        <path d="M156 246 Q136 272 130 300" stroke="#C68A62" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <circle cx="129" cy="302" r="9" fill="#C68A62"/>
+        <!-- neck & head -->
+        <rect x="169" y="206" width="16" height="22" rx="6" fill="#B87B55"/>
+        <circle cx="177" cy="190" r="32" fill="#C68A62"/>
+        <!-- grey hair with bun -->
+        <path d="M145 186 Q146 152 177 152 Q208 152 209 186 Q200 166 177 166 Q154 166 145 186 Z" fill="#D9D9DE"/>
+        <circle cx="206" cy="166" r="14" fill="#CACAD2"/>
+        <!-- glasses -->
+        <circle cx="166" cy="192" r="9" fill="none" stroke="#1E2447" stroke-width="2.5"/>
+        <circle cx="190" cy="192" r="9" fill="none" stroke="#1E2447" stroke-width="2.5"/>
+        <line x1="175" y1="192" x2="181" y2="192" stroke="#1E2447" stroke-width="2.5"/>
+        <!-- bindi & smile -->
+        <circle cx="178" cy="174" r="3" fill="#E23D3D"/>
+        <path d="M168 208 Q178 216 188 208" stroke="#7A4A2E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <!-- SON -->
+        <ellipse cx="248" cy="414" rx="16" ry="7" fill="#1E2447"/><ellipse cx="278" cy="414" rx="16" ry="7" fill="#1E2447"/>
+        <rect x="236" y="312" width="22" height="100" rx="9" fill="#2A2F4F"/>
+        <rect x="264" y="312" width="22" height="100" rx="9" fill="#2A2F4F"/>
+        <path d="M228 222 Q262 208 296 222 L292 324 L232 324 Z" fill="#2E3A87"/>
+        <path d="M252 214 L262 238 L272 214" fill="#FFF"/>
+        <!-- arm around mother -->
+        <path d="M234 234 Q210 250 204 262" stroke="#2E3A87" stroke-width="18" fill="none" stroke-linecap="round"/>
+        <circle cx="202" cy="264" r="9" fill="#B87B55"/>
+        <!-- other arm holding phone -->
+        <path d="M292 236 Q306 270 296 292" stroke="#2E3A87" stroke-width="18" fill="none" stroke-linecap="round"/>
+        <circle cx="294" cy="294" r="9" fill="#B87B55"/>
+        <rect x="286" y="276" width="18" height="28" rx="4" fill="#1E2447"/>
+        <!-- head -->
+        <rect x="254" y="190" width="16" height="22" rx="6" fill="#A86E4A"/>
+        <circle cx="262" cy="170" r="30" fill="#B87B55"/>
+        <path d="M232 168 Q230 136 262 136 Q296 136 292 170 Q286 150 262 152 Q240 152 232 168 Z" fill="#1E1B2E"/>
+        <circle cx="252" cy="172" r="3" fill="#1E1B2E"/><circle cx="272" cy="172" r="3" fill="#1E1B2E"/>
+        <path d="M253 186 Q262 193 271 186" stroke="#6B3E24" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <!-- floating phone alert -->
+        <g>
+          <rect x="10" y="40" width="226" height="118" rx="18" fill="#FFFFFF" stroke="#EEE3D0" stroke-width="2"/>
+          <circle cx="46" cy="70" r="14" fill="#FF6B57"/>
+          <path d="M46 62 v10 M46 77 v1" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+          <text x="68" y="66" font-family="Nunito,sans-serif" font-weight="800" font-size="14" fill="#1E2447">Gap found</text>
+          <text x="68" y="84" font-family="Nunito,sans-serif" font-weight="600" font-size="12" fill="#50577A">Thursday, 1:00 to 2:00</text>
+          <rect x="28" y="100" width="194" height="22" rx="8" fill="#FFE4DF"/>
+          <text x="42" y="116" font-family="Nunito,sans-serif" font-weight="700" font-size="12" fill="#C23A26">No one with Amma if late</text>
+          <rect x="32" y="128" width="110" height="18" rx="8" fill="#DDF5EA"/>
+          <text x="42" y="141" font-family="Nunito,sans-serif" font-weight="700" font-size="11" fill="#0F6B46">3 options to decide</text>
+        </g>
+        <!-- sparkles -->
+        <path d="M250 60 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z" fill="#FFB81C"/>
+        <circle cx="96" cy="222" r="6" fill="#3FA2F6"/>
+        <circle cx="60" cy="300" r="9" fill="#FFB81C" opacity=".7"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<section class="tl-section">
+  <div class="wrap tl-wrap">
+    <div>
+      <span class="eyebrow">See the gap at a glance</span>
+      <h2>A plan that looks complete, until the visit runs late</h2>
+      <p class="lead">This is a hypothetical plan, entered the way a family might. Everything is booked. One hour is not covered.</p>
+    </div>
+    <div class="card" role="figure" aria-label="Example visit timeline: the visit may run until 2, the brother leaves at 1, the cab comes at 1:30, so nobody is with her from 1 to 2">
+      <div class="tl-title">Example: Mother's scan, Thursday</div>
+      <div class="tl-sub">9 a.m. to 3 p.m.</div>
+      <div class="tl-hours"><span>9</span><span>10</span><span>11</span><span>12</span><span>1</span><span>2</span></div>
+      <div class="tl-row"><div class="tl-label"><i style="background:var(--indigo)"></i>Visit</div><div class="tl-track">
+        <div class="bar visit" style="left:16.7%;width:33.3%">Scan + consult</div>
+        <div class="bar late" style="left:50%;width:33.3%">may run late</div>
+      </div></div>
+      <div class="tl-row"><div class="tl-label"><i style="background:var(--leaf)"></i>Brother</div><div class="tl-track">
+        <div class="bar helper" style="left:8.3%;width:58.3%">With her till 1</div>
+      </div></div>
+      <div class="tl-row"><div class="tl-label"><i style="background:var(--sky)"></i>Cab</div><div class="tl-track">
+        <div class="bar cab" style="left:75%;width:13%">1:30</div>
+      </div></div>
+      <div class="tl-row"><div class="tl-label"><i style="background:var(--coral)"></i>Coverage</div><div class="tl-track">
+        <div class="bar gap" style="left:66.7%;width:16.7%">No one</div>
+      </div></div>
+      <div class="tl-flag">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#fff"/><path d="M12 6v8M12 17.5v.5" stroke="#FF6B57" stroke-width="3" stroke-linecap="round"/></svg>
+        <span><b>Gap found:</b> if the scan runs until 2, nobody is with her from 1:00 to 2:00, and the cab arrives while she is still inside.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="story">
+  <div class="wrap story-grid">
+    <div>
+      <span class="eyebrow">The hour nobody planned for</span>
+      <h2>Every plan assumes the visit will end on time.</h2>
+      <div class="clock-art">
+        <svg viewBox="0 0 300 260" role="img" aria-label="Clock with the hour from 1 to 2 highlighted as uncovered">
+          <circle cx="150" cy="130" r="104" fill="#2E3A87"/>
+          <circle cx="150" cy="130" r="88" fill="#FFF9EF"/>
+          <!-- 1 to 2 o'clock wedge -->
+          <path d="M150 130 L194 53.8 A88 88 0 0 1 226.2 86 Z" fill="#FF6B57"/>
+          <g stroke="#1E2447" stroke-width="4" stroke-linecap="round">
+            <line x1="150" y1="50" x2="150" y2="62"/><line x1="230" y1="130" x2="218" y2="130"/>
+            <line x1="150" y1="210" x2="150" y2="198"/><line x1="70" y1="130" x2="82" y2="130"/>
+          </g>
+          <line x1="150" y1="130" x2="150" y2="76" stroke="#1E2447" stroke-width="6" stroke-linecap="round"/>
+          <line x1="150" y1="130" x2="196" y2="112" stroke="#1E2447" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="150" cy="130" r="8" fill="#FFB81C"/>
+          <rect x="222" y="30" width="72" height="34" rx="17" fill="#FFB81C"/>
+          <text x="258" y="53" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="800" font-size="15" fill="#1E2660">1 to 2?</text>
+        </svg>
+      </div>
+    </div>
+    <div class="post">
+      <p>Your mother's scan is on Thursday at 10.<br>Your brother can stay with her until 1. The cab home is booked for 1:30.<br>You're in another city, holding it together over WhatsApp.</p>
+      <p class="q">Now the scan runs late. Who is with her between 1 and 2?</p>
+      <p>Nobody planned for that hour. The plan only covered the best case.</p>
+      <p>VisitSaathi would flag that gap on Monday, not on Thursday afternoon. Then it shows the options you actually have: a neighbour you listed, a later cab, or your brother staying an hour longer. You decide, and each helper gets a short handover on WhatsApp.</p>
+      <p class="quiet">Anything still unresolved stays visible.</p>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">How it works</span>
+      <h2>From scattered messages to a covered day</h2>
+      <p class="lead">No long forms. A few simple questions about the visit and the people helping.</p>
+    </div>
+    <div class="steps">
+      <div class="step c1"><span class="num">1</span>
+        <div class="ico"><svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="8" width="30" height="27" rx="5" fill="#3FA2F6"/><rect x="5" y="8" width="30" height="8" rx="4" fill="#1E6FC0"/><rect x="11" y="4" width="4" height="8" rx="2" fill="#1E2447"/><rect x="25" y="4" width="4" height="8" rx="2" fill="#1E2447"/><circle cx="20" cy="26" r="5" fill="#fff"/></svg></div>
+        <h3>Describe the visit</h3><p>Pick the visit type and time. The finishing time is a range you can adjust, not a single guess.</p></div>
+      <div class="step c2"><span class="num">2</span>
+        <div class="ico"><svg width="40" height="38" viewBox="0 0 42 40" aria-hidden="true"><circle cx="14" cy="13" r="7" fill="#1FA971"/><path d="M2 36c0-8 5-13 12-13s12 5 12 13z" fill="#1FA971"/><circle cx="29" cy="15" r="6" fill="#FFB81C"/><path d="M19 36c0-7 4-11 10-11s11 4 11 11z" fill="#FFB81C"/></svg></div>
+        <h3>Add your helpers</h3><p>Sibling, neighbour, driver or caregiver, with the hours they can do and whether that is firm or tentative.</p></div>
+      <div class="step c3"><span class="num">3</span>
+        <div class="ico"><svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><circle cx="17" cy="17" r="12" fill="none" stroke="#FF6B57" stroke-width="5"/><line x1="26" y1="26" x2="36" y2="36" stroke="#FF6B57" stroke-width="6" stroke-linecap="round"/><path d="M17 11v7M17 22v1" stroke="#1E2447" stroke-width="3.5" stroke-linecap="round"/></svg></div>
+        <h3>See the gaps</h3><p>Steps nobody owns, shaky help on important steps, and times your parent could be alone if things run late.</p></div>
+      <div class="step c4"><span class="num">4</span>
+        <div class="ico"><svg width="40" height="38" viewBox="0 0 42 40" aria-hidden="true"><path d="M4 8a5 5 0 0 1 5-5h24a5 5 0 0 1 5 5v16a5 5 0 0 1-5 5H16l-8 7v-7H9a5 5 0 0 1-5-5z" fill="#FFB81C"/><path d="M13 16l5 5 10-10" stroke="#1E2447" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Decide and share</h3><p>Choose from options built only from the people you entered. Each helper gets their own message, ready for WhatsApp.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="journey" id="journey">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">What it checks</span>
+      <h2>The whole visit, not just the appointment</h2>
+      <p class="lead">Most plans cover getting there. The gaps usually sit in the parts nobody thinks to assign.</p>
+    </div>
+    <div class="road">
+      <div class="stage">
+        <div class="disc" style="background:var(--lotus-soft)"><svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><path d="M8 26 28 9l20 17v22a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3z" fill="#EE6FA5"/><rect x="22" y="33" width="12" height="18" rx="2" fill="#fff"/><rect x="36" y="28" width="8" height="8" rx="2" fill="#fff"/><path d="M4 28 28 7l24 21" stroke="#B83C74" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Before</h3><ul><li>Appointment confirmed</li><li>File and reports packed</li><li>Who carries them</li><li>Hospital's instructions checked</li></ul></div>
+      <div class="stage">
+        <div class="disc" style="background:var(--sky-soft)"><svg width="60" height="46" viewBox="0 0 60 46" aria-hidden="true"><path d="M6 26l6-14a5 5 0 0 1 5-3h26a5 5 0 0 1 5 3l6 14v10a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3z" fill="#3FA2F6"/><path d="M14 24l4-10h24l4 10z" fill="#E0F0FE"/><circle cx="17" cy="38" r="6" fill="#1E2447"/><circle cx="43" cy="38" r="6" fill="#1E2447"/><circle cx="17" cy="38" r="2.5" fill="#fff"/><circle cx="43" cy="38" r="2.5" fill="#fff"/></svg></div>
+        <h3>Getting there</h3><ul><li>Pickup time</li><li>Who travels with them</li><li>Who meets them at the gate</li></ul></div>
+      <div class="stage">
+        <div class="disc" style="background:#fff"><svg width="54" height="54" viewBox="0 0 54 54" aria-hidden="true"><rect x="7" y="12" width="40" height="38" rx="4" fill="#E0F0FE" stroke="#3FA2F6" stroke-width="3"/><rect x="21" y="2" width="12" height="20" rx="3" fill="#FF6B57"/><rect x="17" y="6" width="20" height="12" rx="3" fill="#FF6B57"/><rect x="21" y="36" width="12" height="14" fill="#2E3A87"/><rect x="12" y="26" width="7" height="7" rx="1.5" fill="#3FA2F6"/><rect x="35" y="26" width="7" height="7" rx="1.5" fill="#3FA2F6"/></svg></div>
+        <h3>At the hospital</h3><ul><li>Registration</li><li>Waiting and consult</li><li>Tests and pharmacy</li><li>Billing or insurance desk</li></ul></div>
+      <div class="stage hl">
+        <span class="flag-tag">Where the example breaks</span>
+        <div class="disc" style="background:var(--coral)"><svg width="58" height="52" viewBox="0 0 58 52" aria-hidden="true"><path d="M20 22 34 10l14 12v24a2 2 0 0 1-2 2H22a2 2 0 0 1-2-2z" fill="#fff"/><rect x="30" y="34" width="8" height="14" fill="#FFB81C"/><path d="M4 40c6 0 8-6 14-6" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="1 7"/><circle cx="8" cy="40" r="5" fill="#FFB81C"/></svg></div>
+        <h3>Getting home</h3><ul><li>Return transport</li><li>Who stays until they are inside</li><li>Who is home when they arrive</li></ul></div>
+      <div class="stage">
+        <div class="disc" style="background:var(--leaf-soft)"><svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><rect x="8" y="6" width="36" height="42" rx="5" fill="#1FA971"/><rect x="18" y="2" width="16" height="9" rx="3" fill="#0F6B46"/><path d="M16 22l4 4 8-8M16 36l4 4 8-8" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="31" y="22" width="8" height="3.5" rx="1.5" fill="#fff"/><rect x="31" y="36" width="8" height="3.5" rx="1.5" fill="#fff"/></svg></div>
+        <h3>After</h3><ul><li>Medicines bought</li><li>Reports collection date</li><li>Next appointment noted</li><li>Evening check-in</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="try">
+  <div class="wrap preview-grid">
+    <div>
+      <span class="eyebrow">Visit Gap Check</span>
+      <h2>What you get back</h2>
+      <p class="lead" style="margin-bottom:20px">Clear gaps, real choices and a message for each helper. If something can't be covered with the people you entered, VisitSaathi says so instead of pretending the plan is complete.</p>
+      <div class="soon"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="#2E3A87" stroke-width="2.5"/><path d="M10 5v5l3 2" stroke="#2E3A87" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>The interactive gap check is coming to this page next. This preview uses the example visit.</div>
+    </div>
+    <div class="card out">
+      <h4>Gaps</h4>
+      <div class="gapitem"><i class="dot"></i><div><b>1:00 to 2:00 uncovered</b> if the scan runs late. Brother leaves at 1.</div></div>
+      <div class="gapitem warn"><i class="dot"></i><div><b>Reports collection</b> has no owner.</div></div>
+      <h4>Decide one</h4>
+      <div class="opt"><i class="radio"></i><div>Neighbour covers 1:00 to 2:00<small>Listed as available after 12. Tentative.</small></div></div>
+      <div class="opt"><i class="radio"></i><div>Move the cab to 2:15<small>Leaves 1:00 to 2:00 still uncovered.</small></div></div>
+      <div class="opt"><i class="radio"></i><div>Brother stays until 2<small>Only if he confirms. Marked as flexible.</small></div></div>
+      <h4>Handover</h4>
+      <div class="handover"><b>For: Brother</b>Thursday, reach home by 9:15. The file is in the blue bag. Stay until the neighbour arrives or 2 p.m.<br><span class="unres">UNRESOLVED: reports collection</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="why" class="compare-sec">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Why not just a WhatsApp group?</span>
+      <h2>Keep WhatsApp. Add the part it can't do.</h2>
+    </div>
+    <div class="compare">
+      <div class="col them">
+        <div class="col-head"><svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true"><path d="M4 10a6 6 0 0 1 6-6h20a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6H16l-8 7v-7a6 6 0 0 1-4-6z" fill="#C9C2B3"/><path d="M14 20a6 6 0 0 1 6-6h16a6 6 0 0 1 6 6v10a6 6 0 0 1-2 4.5V42l-7-6H20a6 6 0 0 1-6-6z" fill="#A8A092"/></svg><h3>A family group chat</h3></div>
+        <ul>
+          <li>Only covers what someone remembers to mention</li>
+          <li>Plans around the visit ending on time</li>
+          <li>"I'll try" reads the same as "I'll be there"</li>
+          <li>Decisions get buried in long threads</li>
+        </ul></div>
+      <div class="col us">
+        <div class="col-head"><svg width="46" height="46" viewBox="0 0 36 36" aria-hidden="true"><circle cx="13" cy="18" r="11" fill="#FF6B57"/><circle cx="23" cy="18" r="11" fill="#2E3A87" opacity=".9"/><path d="M13 18c2-4 8-4 10 0" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg><h3>VisitSaathi</h3></div>
+        <ul>
+          <li>Checks every stage of the visit, including the ride home</li>
+          <li>Tests coverage against a late finish</li>
+          <li>Flags tentative help on important steps</li>
+          <li>Sends each helper a short message on WhatsApp</li>
+        </ul></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">What we won't do</span>
+      <h2>Honest about what a plan can and can't fix</h2>
+    </div>
+    <div class="promises">
+      <div class="promise"><div class="ico" style="background:var(--sun-soft)"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="11" cy="9" r="5" fill="#D99200"/><path d="M2 26c0-6 4-10 9-10s9 4 9 10z" fill="#D99200"/><path d="M20 8l8 8M28 8l-8 8" stroke="#FF6B57" stroke-width="3.5" stroke-linecap="round"/></svg></div><h3>No invented help</h3><p>Options only use people and transport you entered. If nobody can cover a gap, we tell you plainly.</p></div>
+      <div class="promise"><div class="ico" style="background:var(--lotus-soft)"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="11" width="24" height="9" rx="4.5" fill="#EE6FA5" transform="rotate(-40 15 15)"/><line x1="4" y1="26" x2="26" y2="4" stroke="#1E2447" stroke-width="3" stroke-linecap="round"/></svg></div><h3>No medical advice</h3><p>VisitSaathi handles logistics only. Questions about symptoms, medicines or doses go to the treating doctor.</p></div>
+      <div class="promise"><div class="ico" style="background:var(--leaf-soft)"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="6" y="13" width="18" height="14" rx="3" fill="#1FA971"/><path d="M10 13V9a5 5 0 0 1 10 0v4" stroke="#1FA971" stroke-width="3.5" fill="none"/><circle cx="15" cy="20" r="2.5" fill="#fff"/></svg></div><h3>No personal details</h3><p>Helpers are entered by role, like "brother" or "driver". No names, ages or health information.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap cta-grid">
+    <div>
+      <h2>If you've managed a parent's hospital visit from another city, which part of the day tends to fall through?</h2>
+      <p class="lead">We're testing VisitSaathi with families who have a planned visit coming up. Tell us about yours and help shape what we build.</p>
+      <a href="#try" class="btn btn-primary">Check a visit →</a>
+      <p class="note">VisitSaathi is a product in development, built as part of a GenAI course project.</p>
+    </div>
+    <div class="cta-art">
+      <svg viewBox="0 0 320 300" role="img" aria-label="Illustration: an elderly father waving from his window at home">
+        <rect x="30" y="40" width="260" height="230" rx="24" fill="#FFF9EF"/>
+        <rect x="30" y="40" width="260" height="230" rx="24" fill="none" stroke="#1E2660" stroke-width="6"/>
+        <line x1="160" y1="40" x2="160" y2="270" stroke="#1E2660" stroke-width="5"/>
+        <line x1="30" y1="150" x2="160" y2="150" stroke="#1E2660" stroke-width="5"/>
+        <circle cx="88" cy="96" r="22" fill="#FFB81C"/>
+        <!-- plant -->
+        <rect x="190" y="228" width="40" height="36" rx="6" fill="#FF6B57"/>
+        <path d="M210 228 Q196 196 180 192 M210 228 Q214 188 232 180 M210 228 Q224 206 244 204" stroke="#1FA971" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <!-- father -->
+        <path d="M60 270 Q64 208 104 204 Q144 208 148 270 Z" fill="#3FA2F6"/>
+        <path d="M94 206 L104 226 L114 206" fill="#fff"/>
+        <rect x="96" y="176" width="16" height="22" rx="6" fill="#A86E4A"/>
+        <circle cx="104" cy="160" r="28" fill="#B87B55"/>
+        <path d="M78 156 Q80 132 104 132 Q128 132 130 156 Q122 142 104 142 Q86 142 78 156 Z" fill="#E6E6EC"/>
+        <path d="M88 178 Q104 172 120 178 Q112 186 104 186 Q96 186 88 178Z" fill="#E6E6EC"/>
+        <circle cx="94" cy="160" r="3" fill="#1E1B2E"/><circle cx="114" cy="160" r="3" fill="#1E1B2E"/>
+        <!-- waving hand -->
+        <path d="M140 232 Q162 214 168 190" stroke="#3FA2F6" stroke-width="16" fill="none" stroke-linecap="round"/>
+        <circle cx="170" cy="184" r="10" fill="#B87B55"/>
+        <!-- heart -->
+        <path d="M250 70c-6-12-26-10-26 6 0 12 16 20 26 30 10-10 26-18 26-30 0-16-20-18-26-6z" fill="#EE6FA5"/>
+        <path d="M268 30 l4 9 9 4 -9 4 -4 9 -4 -9 -9 -4 9 -4z" fill="#FF6B57"/>
+      </svg>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 VisitSaathi</span>
+    <span>Logistics support only. Not a medical service.</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btns=document.querySelectorAll('.size-toggle button');
+    function set(size){
+      document.body.classList.toggle('large',size==='large');
+      btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.size===size));});
+      try{localStorage.setItem('vs-size',size);}catch(e){}
+    }
+    btns.forEach(function(b){b.addEventListener('click',function(){set(b.dataset.size);});});
+    try{var saved=localStorage.getItem('vs-size');if(saved)set(saved);}catch(e){}
+  })();
+</script>
+</body>
+</html>
