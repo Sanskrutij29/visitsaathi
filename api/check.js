@@ -54,15 +54,40 @@ function describeForModel(plan, result) {
   };
 }
 
-// Models to try in order. Google retires or restricts model names over time, so we fall back on 404.
-const MODELS = [process.env.GEMINI_MODEL, 'gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-flash'].filter(Boolean);
+// Google renames and retires models often, so we ask the API which models this key can use
+// and prefer a stable Flash-Lite, then Flash. GEMINI_MODEL (optional env var) always goes first.
+let cachedModels = null;
+async function pickModels(key) {
+  if (cachedModels) return cachedModels;
+  const fallback = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-flash'];
+  let names = [];
+  try {
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000', { headers: { 'x-goog-api-key': key } });
+    const data = await r.json();
+    if (!r.ok) console.error(`ListModels ${r.status}: ${(data.error && data.error.message) || ''}`);
+    names = (data.models || [])
+      .filter((m) => (m.supportedGenerationMethods || []).includes('generateContent'))
+      .map((m) => m.name.replace(/^models\//, ''))
+      .filter((n) => /^gemini-/.test(n) && !/(image|tts|audio|live|embedding|vision|thinking|exp|robotics|computer)/.test(n));
+  } catch (e) { console.error('ListModels failed', e.message); }
+  const score = (n) => {
+    const lite = /flash-lite/.test(n) ? 0 : /flash/.test(n) ? 1 : 2;
+    const pre = /preview/.test(n) ? 1 : 0;
+    const ver = parseFloat((n.match(/gemini-(\d+(\.\d+)?)/) || [0, 0])[1]);
+    return [lite, pre, -ver, n.length];
+  };
+  names.sort((a, b) => { const x = score(a), y = score(b); for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] < y[i] ? -1 : 1; return 0; });
+  cachedModels = [...new Set([process.env.GEMINI_MODEL, ...names.slice(0, 4), ...fallback].filter(Boolean))];
+  console.log('Gemini models to try:', cachedModels.join(', '));
+  return cachedModels;
+}
 
 async function callGemini(payload) {
   if (process.env.MOCK_GEMINI === '1') return { ...mockGemini(payload), model: 'mock' };
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error('GEMINI_API_KEY is missing.');
   let lastErr = '';
-  for (const model of [...new Set(MODELS)]) {
+  for (const model of await pickModels(key)) {
     for (const useSchema of [true, false]) {
       const generationConfig = { maxOutputTokens: MAX_OUTPUT_TOKENS, temperature: 0.3, responseMimeType: 'application/json' };
       if (useSchema) generationConfig.responseSchema = SCHEMA;
