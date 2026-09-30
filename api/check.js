@@ -5,7 +5,6 @@ const crypto = require('crypto');
 const { validate, analyse, ValidationError, VISIT_TYPES, OWNER_TASKS, fmt, toMin } = require('./_rules');
 const { insertCheck, countRecent } = require('./_supabase');
 
-const MODEL = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
 const MAX_OUTPUT_TOKENS = 800;
 const DAILY_CAP = 3;
 const MEDICAL_REFUSAL = "VisitSaathi only helps with visit logistics, so I can't advise on symptoms, medicines or doses. Please ask the treating doctor, or call emergency services if it is urgent.";
@@ -55,25 +54,44 @@ function describeForModel(plan, result) {
   };
 }
 
+// Models to try in order. Google retires or restricts model names over time, so we fall back on 404.
+const MODELS = [process.env.GEMINI_MODEL, 'gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-flash'].filter(Boolean);
+
 async function callGemini(payload) {
-  if (process.env.MOCK_GEMINI === '1') return mockGemini(payload);
+  if (process.env.MOCK_GEMINI === '1') return { ...mockGemini(payload), model: 'mock' };
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error('GEMINI_API_KEY is missing.');
-  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-      contents: [{ role: 'user', parts: [{ text: JSON.stringify(payload) }] }],
-      generationConfig: { maxOutputTokens: MAX_OUTPUT_TOKENS, temperature: 0.3, responseMimeType: 'application/json', responseSchema: SCHEMA },
-    }),
-  });
-  const data = await r.json();
-  if (!r.ok) throw new Error(`Gemini error ${r.status}: ${JSON.stringify(data).slice(0, 300)}`);
-  const text = (data.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('');
-  let parsed;
-  try { parsed = JSON.parse(text); } catch { parsed = { summary: text.slice(0, 400), handovers: [], notes_response: '' }; }
-  return { ...parsed, usage: { input: data.usageMetadata?.promptTokenCount || 0, output: data.usageMetadata?.candidatesTokenCount || 0 } };
+  let lastErr = '';
+  for (const model of [...new Set(MODELS)]) {
+    for (const useSchema of [true, false]) {
+      const generationConfig = { maxOutputTokens: MAX_OUTPUT_TOKENS, temperature: 0.3, responseMimeType: 'application/json' };
+      if (useSchema) generationConfig.responseSchema = SCHEMA;
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{ role: 'user', parts: [{ text: JSON.stringify(payload) }] }],
+          generationConfig,
+        }),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (r.ok) {
+        const text = (data.candidates?.[0]?.content?.parts || []).filter((p) => !p.thought).map((p) => p.text || '').join('');
+        let parsed;
+        try { parsed = JSON.parse(text.replace(/^```(json)?|```$/g, '').trim()); } catch { parsed = { summary: text.slice(0, 400), handovers: [], notes_response: '' }; }
+        const u = data.usageMetadata || {};
+        return { ...parsed, model, usage: { input: u.promptTokenCount || 0, output: (u.candidatesTokenCount || 0) + (u.thoughtsTokenCount || 0) } };
+      }
+      lastErr = `Gemini ${model} ${r.status}: ${(data.error && data.error.message) || ''}`.slice(0, 300);
+      console.error(lastErr);
+      if (r.status === 404) break;          // model not available: try the next model
+      if (r.status === 400 && useSchema) continue; // schema not accepted: retry without it
+      if (r.status === 400 || r.status === 403 || r.status === 401) throw new Error(lastErr); // key problem
+      break;                                 // 429/5xx: try next model
+    }
+  }
+  throw new Error(lastErr || 'Gemini unavailable');
 }
 
 // Local testing only: never active unless MOCK_GEMINI=1 is set.
@@ -116,7 +134,7 @@ module.exports = async (req, res) => {
       gap_count: result.gaps.length,
       output: JSON.stringify({ summary: ai.summary, handovers: ai.handovers, notes_response: ai.notes_response }),
       guardrail_triggered: Boolean(medicalNote),
-      model: process.env.MOCK_GEMINI === '1' ? 'mock' : MODEL,
+      model: ai.model,
       input_tokens: ai.usage.input,
       output_tokens: ai.usage.output,
     });
@@ -132,6 +150,7 @@ module.exports = async (req, res) => {
   } catch (e) {
     if (e instanceof ValidationError) return res.status(400).json({ error: e.message });
     console.error(e);
-    return res.status(500).json({ error: 'Something went wrong while checking the plan. Please try again.' });
+    const reason = /Gemini/.test(e.message) ? 'the AI service' : /Supabase/.test(e.message) ? 'the database' : 'the server';
+    return res.status(500).json({ error: `Something went wrong with ${reason} while checking the plan. Please try again.`, detail: e.message.replace(/AIza[\w-]+/g, '[key]').slice(0, 200) });
   }
 };
