@@ -132,7 +132,18 @@
   .dot{width:12px;height:12px;border-radius:50%;background:var(--coral);margin-top:7px;flex-shrink:0}
   .warn .dot{background:var(--sun)}
   .opt{padding:11px 16px;border:2px solid var(--line);border-radius:14px;font-size:16px;font-weight:700;margin-bottom:8px;display:flex;gap:12px;align-items:center}
-  .opt .radio{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--indigo);flex-shrink:0}
+  .opt .radio{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--indigo);flex-shrink:0;position:relative}
+  label.opt{cursor:pointer;transition:border-color .15s,background .15s}
+  label.opt:hover{border-color:var(--indigo)}
+  label.opt input{position:absolute;opacity:0;width:1px;height:1px}
+  label.opt input:checked ~ .radio{background:radial-gradient(circle,var(--indigo) 45%,transparent 50%)}
+  label.opt:has(input:checked){border-color:var(--indigo);background:var(--indigo-soft)}
+  label.opt input:focus-visible ~ .radio{outline:3px solid var(--sun);outline-offset:2px}
+  fieldset.decision{border:0;padding:0;margin:0 0 14px}
+  fieldset.decision legend{font-weight:800;font-size:16px;margin-bottom:6px;padding:0}
+  .next-step{font-size:15px;color:var(--ink);margin:4px 0 0}
+  .next-step:empty{display:none}
+  .next-step .mini{margin-left:6px;display:inline-block}
   .opt small{display:block;color:var(--muted);font-size:14px;font-weight:600}
   .handover{background:#DCF8C6;border-radius:16px 16px 16px 4px;padding:14px 16px;font-size:15px;max-width:360px;box-shadow:0 2px 0 rgba(0,0,0,.06)}
   .handover b{display:block;font-size:13px;color:#0F6B46;margin-bottom:4px}
@@ -735,15 +746,31 @@
         notes:form.notes.value};
     }
 
+    function nextStep(o){
+      var m;
+      if(/^Confirm/i.test(o)) return 'Ask them to confirm, change their commitment to Firm in the form, and run the check again.';
+      if(/firm backup/i.test(o)) return 'Add a helper who can firmly cover this window, then run the check again.';
+      if((m=o.match(/^Ask the ([a-z ]+?) to (stay|come)/i))) return 'Message the '+m[1]+' to agree first. Once they say yes, update their hours in the form and run the check again.';
+      if(/^Move the return trip/i.test(o)) return 'Change the return time in the form. Someone still needs to be with your parent until then, so check that gap too.';
+      if(/^No one you entered/i.test(o)) return 'Add another helper or choose an appointment that is likely to end earlier, then run the check again.';
+      if(/^Book a cab/i.test(o)) return 'Book it, set "Back home" to Cab or taxi with that time, and run the check again.';
+      if((m=o.match(/^The ([a-z ]+?) \(free until/i))) return 'Ask the '+m[1]+' to bring your parent home, set them as "Back home" in the form, and run the check again.';
+      return 'Make this change in the form above and run the check again.';
+    }
     function render(d){
       var h='<h4>Summary</h4><div class="summary">'+esc(d.summary)+'</div>';
       h+='<h4>Gaps found ('+d.gaps.length+')</h4>';
       h+=d.gaps.length?d.gaps.map(function(g){return '<div class="gapitem'+(g.severity==='medium'?' warn':'')+'"><i class="dot"></i><div><b>'+esc(g.title)+'</b><small>'+esc(g.stage)+' · '+esc(g.detail)+'</small></div></div>';}).join(''):'<div class="none-found">No gaps found. Every stage has someone assigned.</div>';
-      if(d.decisions&&d.decisions.length){h+='<h4>Decisions for you</h4>'+d.decisions.map(function(x){return '<div class="decision"><b>'+esc(x.question)+'</b>'+x.options.map(function(o){return '<div class="opt"><i class="radio"></i><div>'+esc(o)+'</div></div>';}).join('')+'</div>';}).join('');}
+      if(d.decisions&&d.decisions.length){h+='<h4>Decisions for you</h4>'+d.decisions.map(function(x,di){return '<fieldset class="decision"><legend>'+esc(x.question)+'</legend>'+x.options.map(function(o,oi){return '<label class="opt"><input type="radio" name="dec'+di+'" value="'+oi+'"><i class="radio" aria-hidden="true"></i><div>'+esc(o)+'</div></label>';}).join('')+'<p class="next-step" id="next'+di+'" aria-live="polite"></p></fieldset>';}).join('');}
       if(d.handovers&&d.handovers.length){h+='<h4>Draft handovers</h4>'+d.handovers.map(function(x,i){return '<div class="handover-wrap"><div class="handover" id="ho'+i+'"><b>For: '+esc(x.role)+'</b>'+esc(x.message)+'</div><div class="handover-actions"><button type="button" class="mini" data-copy="'+i+'">Copy</button><a class="mini" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(x.message)+'">Share on WhatsApp</a></div></div>';}).join('');}
       if(d.notes_response){h+='<h4>About your note</h4><div class="notes-resp">'+esc(d.notes_response)+'</div>';}
       if(typeof d.remaining==='number')h+='<p class="remaining">'+d.remaining+' free check'+(d.remaining===1?'':'s')+' left today.</p>';
       resultEl.innerHTML=h;
+      resultEl.querySelectorAll('.decision input[type=radio]').forEach(function(inp){inp.addEventListener('change',function(){
+        var di=inp.name.slice(3), opt=d.decisions[+di].options[+inp.value];
+        var el=document.getElementById('next'+di);
+        el.innerHTML='<b>Next step:</b> '+esc(nextStep(opt))+' <a href="#gapForm" class="mini">Update the plan ↑</a>';
+      });});
       resultEl.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){var t=d.handovers[+b.dataset.copy].message;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='Copied';},function(){b.textContent='Select and copy';});});});
     }
 
